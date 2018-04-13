@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+
+  php:
+    image: php:7.1-apache
+    working_dir: /var/www
+    command: >
+      bash -c "sed -ri -e 's!/var/www/html!/var/www/public!g'
+      /etc/apache2/sites-available/*.conf; a2enmod rewrite;
+      apache2-foreground"
+    networks:
+      default:
+        aliases:
+          - behat.testing
+    volumes:
+      - ./:/var/www/
+    ports:
+      - 80:80
+    links:
+      - selenium
+
+  selenium:
+    image: selenium/standalone-chrome-debug:3.11.0-californium
+    environment:
+      - VNC_NO_PASSWORD=1
+      - SCREEN_WIDTH=900 #1200
+      - SCREEN_HEIGHT=675
+    ports:
+      - 4444:4444
+      - 5900:5900
+
+  vnc:
+    image: dougw/novnc
+    command: >
+      bash -c "(echo \"<script>window.location='vnc.html?host=\";
+      printenv REMOTE_HOST; echo \"&autoconnect=true&port=\"; printenv REMOTE_PORT;
+      echo \"'</script>\";) | tr -d '\n' > /root/noVNC/build/index.html;
+      supervisord -c /etc/supervisor/conf.d/supervisord.conf"
+    environment:
+      - REMOTE_HOST=localhost
+      - REMOTE_PORT=5900
+    ports:
+      - 8081:8081
+    links:
+      - selenium
