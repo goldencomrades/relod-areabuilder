@@ -1,21 +1,41 @@
+Feature: Login into the application
 
-Feature: Login allow a not authenticated user to visualise a part of the application related with his user type.
+  As a guest user
+  I want to be able to log in into the application
+  So that I can use the private section
 
-  Scenario: As not registered user I want to successfully login into the application
-    Given I am a not registered user
-    And I go to the homepage
-    And I see the the login form
-    And I insert a correct username
-    And I insert a correct password
-    When I click submit button
-    Then I can see a welcome message
+  Scenario: Guest user executes login successfully
+    Given I am a "guest" user
+    And I am on the login page
+    And I fill in "email" with "test@test.com"
+    And I fill in "password" with "pass1234"
+    When I click "Login" button
+    Then I should be on "/home" page
+    And I should see "Welcome"
 
-  Scenario: As not registered user if I insert correct username and incorrect password I want to not be able to see homepage
-    Given I am a not registered user
-    And I go to the homepage
-    And I see the the login form
-    And I insert a correct username
-    And I insert an incorrect password
-    When I click submit button
-    Then I see the message "wrong username or password"
+  Scenario: Guest user executes login with correct username and wrong password
+    Given I am a "guest" user
+    And I am on the login page
+    And I fill in "email" with "test@test.com"
+    And I fill in "password" with "wrongPass"
+    When I click "Login" button
+    Then I should see "Error"
+    And I should see "Wrong username or password"
 
+  Scenario: Guest user executes login with wrong username and correct password
+    Given I am a "guest" user
+    And I am on the login page
+    And I fill in "email" with "wrongUsername"
+    And I fill in "password" with "pass1234"
+    When I click "Login" button
+    Then I should see "Error"
+    And I should see "Wrong username or password"
+
+  Scenario: Guest user executes login with wrong username and wrong password
+    Given I am a "guest" user
+    And I am on the login page
+    And I fill in "email" with "wrongUsername"
+    And I fill in "password" with "wrongPass"
+    When I click "Login" button
+    Then I should see "Error"
+    And I should see "Wrong username or password"
