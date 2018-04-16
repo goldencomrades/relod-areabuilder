@@ -41,3 +41,5 @@
 **/Entity/*~
 
 .idea/
+
+composer.lock
